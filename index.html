@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Ruby!</title>
+    <style>
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ffccd5;
+            --accent: #c9184a;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            perspective: 1500px;
+        }
+
+        /* --- POLAROID CORNER FRAMES --- */
+        .frame {
+            position: absolute;
+            width: 160px;
+            background: white;
+            padding: 10px 10px 35px 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            z-index: 10;
+            border: 1px solid #eee;
+        }
+        .frame img { width: 100%; height: 180px; object-fit: cover; }
+        
+        .top-left { top: 30px; left: 30px; transform: rotate(-8deg); }
+        .bottom-right { bottom: 30px; right: 30px; transform: rotate(8deg); }
+
+        /* --- 3D MOVING PHOTO BOX --- */
+        .box-container {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            z-index: 5;
+            animation: travelClockwise 16s linear infinite;
+            transform-style: preserve-3d;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateCube 6s infinite linear;
+        }
+
+        .face {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: white;
+            border: 2px solid var(--primary);
+            backface-visibility: visible;
+        }
+        .face img { width: 100%; height: 100%; object-fit: cover; }
+
+        .front  { transform: translateZ(50px); }
+        .back   { transform: rotateY(180deg) translateZ(50px); }
+        .right  { transform: rotateY(90deg) translateZ(50px); }
+        .left   { transform: rotateY(-90deg) translateZ(50px); }
+        .top    { transform: rotateX(90deg) translateZ(50px); background: var(--primary); }
+        .bottom { transform: rotateX(-90deg) translateZ(50px); background: var(--primary); }
+
+        @keyframes rotateCube {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        @keyframes travelClockwise {
+            0%   { top: 10%; left: 10%; }
+            25%  { top: 10%; left: 85%; }
+            50%  { top: 80%; left: 85%; }
+            75%  { top: 80%; left: 10%; }
+            100% { top: 10%; left: 10%; }
+        }
+
+        /* --- FLIPPING ENVELOPE CARD --- */
+        .card-wrapper {
+            width: 340px;
+            height: 440px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .card-wrapper.open { transform: rotateY(180deg); }
+
+        .card-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            background: #fff;
+            border: 5px solid white;
+        }
+
+        .back-side {
+            transform: rotateY(180deg);
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
+            background: #fff9fa;
+        }
+
+        .heart-btn {
+            font-size: 90px;
+            color: var(--primary);
+            cursor: pointer;
+            filter: drop-shadow(0 5px 15px rgba(255, 77, 109, 0.4));
+            animation: heartbeat 1.4s infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* --- BALLOONS --- */
+        .balloon {
+            position: absolute;
+            bottom: -150px;
+            width: 45px;
+            height: 60px;
+            border-radius: 50%;
+            opacity: 0.8;
+            z-index: 1;
+            animation: floatAway 8s linear infinite;
+        }
+        @keyframes floatAway {
+            0% { bottom: -100px; transform: translateX(0); }
+            100% { bottom: 110vh; transform: translateX(100px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="frame top-left"><img src="1.jpg" alt="Memory 1"></div>
+    <div class="frame bottom-right"><img src="2.jpg" alt="Memory 2"></div>
+
+    <div class="box-container">
+        <div class="cube">
+            <div class="face front"><img src="3.jpg"></div>
+            <div class="face back"><img src="4.jpg"></div>
+            <div class="face right"><img src="5.jpg"></div>
+            <div class="face left"><img src="6.jpg"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+    </div>
+
+    <div class="card-wrapper" id="bdayCard" onclick="handleFlip()">
+        <div class="card-side front-side">
+            <div class="heart-btn">❤️</div>
+            <h2 style="color: var(--accent); margin-top: 20px;">For Sis Ruby</h2>
+            <p style="color: #888;">Tap to open your surprise!</p>
+        </div>
+        <div class="card-side back-side">
+            <h1 style="color: var(--accent); font-size: 2.2rem; margin-bottom: 10px;">Happy Birthday!</h1>
+            <p style="font-size: 1.1rem; line-height: 1.6; color: #444;">
+                To my dearest sister <strong>Ruby</strong>,<br><br>
+                Wishing you a day filled with laughter, joy, and all the things you love. You're simply the best!
+            </p>
+            <p style="margin-top: 20px; font-weight: bold; color: var(--primary);">~ With love, Aadi</p>
+        </div>
+    </div>
+
+    <script>
+        function handleFlip() {
+            const card = document.getElementById('bdayCard');
+            if(!card.classList.contains('open')) {
+                card.classList.add('open');
+                triggerPopper();
+            }
+        }
+
+        function triggerPopper() {
+            for(let i=0; i<80; i++) {
+                const conf = document.createElement('div');
+                conf.style.cssText = `
+                    position: fixed; width: 10px; height: 10px;
+                    background: hsl(${Math.random()*360}, 100%, 50%);
+                    left: 50%; top: 50%; border-radius: 2px; z-index: 2000;
+                `;
+                document.body.appendChild(conf);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = 5 + Math.random() * 10;
+                const tx = Math.cos(angle) * 400;
+                const ty = Math.sin(angle) * 400;
+
+                conf.animate([
+                    { transform: 'translate(0,0) rotate(0)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px) rotate(720deg)`, opacity: 0 }
+                ], { duration: 1500 + Math.random()*1000, easing: 'ease-out' });
+
+                setTimeout(() => conf.remove(), 2500);
+            }
+        }
+
+        // Generate Balloons
+        const colors = ['#ff4d6d', '#ff758f', '#ffb3c1', '#ffffff', '#ffccd5'];
+        for(let i=0; i<15; i++) {
+            const b = document.createElement('div');
+            b.className = 'balloon';
+            b.style.left = Math.random() * 100 + 'vw';
+            b.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
+            b.style.animationDelay = Math.random() * 8 + 's';
+            b.style.animationDuration = 6 + Math.random() * 4 + 's';
+            document.body.appendChild(b);
+        }
+    </script>
+</body>
+</html>
