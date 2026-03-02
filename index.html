@@ -14,52 +14,89 @@
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
             font-family: 'Segoe UI', sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
-            perspective: 1500px;
+            overflow-x: hidden;
+            perspective: 1000px;
         }
 
-        /* --- DECORATIVE PHOTO FRAMES --- */
+        /* --- PHOTO FRAMES CONTAINER --- */
+        .frames-container {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
         .frame {
             position: absolute;
-            width: 140px;
+            width: 100px;
             background: white;
-            padding: 8px 8px 25px 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            z-index: 10;
+            padding: 5px 5px 15px 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border: 1px solid #eee;
-            transition: transform 0.3s ease;
-            animation: floatFrame 4s ease-in-out infinite;
-        }
-        
-        .frame img { width: 100%; height: 160px; object-fit: cover; }
-        .frame:hover { transform: scale(1.1) rotate(0deg) !important; z-index: 100; }
-
-        /* Positioning the 4 corner frames */
-        .top-left     { top: 20px; left: 20px; transform: rotate(-8deg); }
-        .top-right    { top: 20px; right: 20px; transform: rotate(8deg); animation-delay: 0.5s; }
-        .bottom-left  { bottom: 20px; left: 20px; transform: rotate(5deg); animation-delay: 1s; }
-        .bottom-right { bottom: 20px; right: 20px; transform: rotate(-5deg); animation-delay: 1.5s; }
-
-        @keyframes floatFrame {
-            0%, 100% { translateY(0); }
-            50% { transform: translateY(-10px) rotate(var(--r, 0deg)); }
+            pointer-events: auto;
+            animation: float 5s ease-in-out infinite;
         }
 
-        /* --- FLIPPING CARD --- */
+        .frame img {
+            width: 100%;
+            height: 110px;
+            object-fit: cover;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(var(--r)); }
+            50% { transform: translateY(-10px) rotate(var(--r)); }
+        }
+
+        /* Desktop Positioning (8 Frames) */
+        .f1 { top: 5%; left: 5%; --r: -8deg; }
+        .f2 { top: 5%; right: 5%; --r: 8deg; }
+        .f3 { bottom: 5%; left: 5%; --r: 5deg; }
+        .f4 { bottom: 5%; right: 5%; --r: -5deg; }
+        .f5 { top: 40%; left: 2%; --r: 10deg; }
+        .f6 { top: 40%; right: 2%; --r: -10deg; }
+        .f7 { top: 2%; left: 45%; --r: 2deg; }
+        .f8 { bottom: 2%; left: 45%; --r: -2deg; }
+
+        /* --- MOBILE OPTIMIZATION --- */
+        @media (max-width: 600px) {
+            .frame {
+                width: 70px;
+                padding: 3px 3px 10px 3px;
+            }
+            .frame img { height: 75px; }
+            
+            /* Tighten positions for mobile so they don't overlap the card too much */
+            .f1 { top: 2%; left: 2%; }
+            .f2 { top: 2%; right: 2%; }
+            .f3 { bottom: 2%; left: 2%; }
+            .f4 { bottom: 2%; right: 2%; }
+            .f5 { top: 25%; left: 1%; }
+            .f6 { top: 25%; right: 1%; }
+            .f7 { bottom: 25%; left: 1%; }
+            .f8 { bottom: 25%; right: 1%; }
+        }
+
+        /* --- MAIN CARD --- */
         .card-wrapper {
-            width: 320px;
-            height: 420px;
+            width: 280px;
+            height: 380px;
             cursor: pointer;
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 50;
+            z-index: 100;
+        }
+
+        @media (max-width: 350px) {
+            .card-wrapper { width: 240px; height: 340px; }
         }
 
         .card-wrapper.open { transform: rotateY(180deg); }
@@ -74,21 +111,20 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
             background: #fff;
             border: 4px solid white;
         }
 
         .back-side {
             transform: rotateY(180deg);
-            padding: 30px;
-            box-sizing: border-box;
+            padding: 20px;
             text-align: center;
             background: #fffdfd;
         }
 
         .heart-btn {
-            font-size: 80px;
+            font-size: 70px;
             color: var(--primary);
             animation: heartbeat 1.4s infinite;
         }
@@ -98,43 +134,48 @@
             50% { transform: scale(1.1); }
         }
 
-        /* --- BACKGROUND DECOR --- */
+        /* --- BALLOONS --- */
         .balloon {
             position: absolute;
-            bottom: -150px;
-            width: 40px;
-            height: 55px;
+            bottom: -100px;
+            width: 30px;
+            height: 40px;
             border-radius: 50%;
-            opacity: 0.7;
-            animation: floatAway 9s linear infinite;
+            opacity: 0.6;
+            animation: floatAway 10s linear infinite;
         }
 
         @keyframes floatAway {
-            0% { bottom: -100px; transform: translateX(0); }
-            100% { bottom: 110vh; transform: translateX(80px); }
+            to { bottom: 110vh; transform: translateX(50px); }
         }
     </style>
 </head>
 <body>
 
-    <div class="frame top-left" style="--r: -8deg;"><img src="1.jpg" alt="Memory 1"></div>
-    <div class="frame top-right" style="--r: 8deg;"><img src="2.jpg" alt="Memory 2"></div>
-    <div class="frame bottom-left" style="--r: 5deg;"><img src="3.jpg" alt="Memory 3"></div>
-    <div class="frame bottom-right" style="--r: -5deg;"><img src="4.jpg" alt="Memory 4"></div>
+    <div class="frames-container">
+        <div class="frame f1"><img src="1.jpg"></div>
+        <div class="frame f2"><img src="2.jpg"></div>
+        <div class="frame f3"><img src="3.jpg"></div>
+        <div class="frame f4"><img src="4.jpg"></div>
+        <div class="frame f5"><img src="5.jpg"></div>
+        <div class="frame f6"><img src="6.jpg"></div>
+        <div class="frame f7"><img src="7.jpg"></div>
+        <div class="frame f8"><img src="8.jpg"></div>
+    </div>
 
     <div class="card-wrapper" id="bdayCard" onclick="handleFlip()">
         <div class="card-side front-side">
             <div class="heart-btn">❤️</div>
-            <h2 style="color: var(--accent); margin-top: 15px;">To Ruby</h2>
-            <p style="color: #999; font-size: 0.9rem;">Click the Heart</p>
+            <h2 style="color: var(--accent); margin-top: 10px;">For Ruby</h2>
+            <p style="color: #999; font-size: 0.8rem;">Tap the Heart</p>
         </div>
         <div class="card-side back-side">
-            <h1 style="color: var(--accent); margin-bottom: 10px;">Happy Birthday!</h1>
-            <p style="color: #444; line-height: 1.6;">
+            <h2 style="color: var(--accent); margin-bottom: 5px;">Happy Birthday!</h2>
+            <p style="color: #444; line-height: 1.4; font-size: 0.95rem;">
                 To the most amazing sister!<br><br>
-                May your year be full of happiness, coding, and success. 
+                I hope your special day is as wonderful as you are. Keep being awesome!
             </p>
-            <p style="margin-top: 20px; font-weight: bold; color: var(--primary);">Love, Aadi</p>
+            <p style="margin-top: 15px; font-weight: bold; color: var(--primary);">Love, Aadi</p>
         </div>
     </div>
 
@@ -148,31 +189,27 @@
         }
 
         function triggerPopper() {
-            for(let i=0; i<60; i++) {
+            for(let i=0; i<50; i++) {
                 const conf = document.createElement('div');
                 conf.style.cssText = `
-                    position: fixed; width: 8px; height: 8px;
+                    position: fixed; width: 6px; height: 6px;
                     background: hsl(${Math.random()*360}, 100%, 50%);
-                    left: 50%; top: 50%; border-radius: 2px; z-index: 2000;
+                    left: 50%; top: 50%; z-index: 2000;
                 `;
                 document.body.appendChild(conf);
-                
                 const angle = Math.random() * Math.PI * 2;
-                const tx = Math.cos(angle) * (200 + Math.random() * 300);
-                const ty = Math.sin(angle) * (200 + Math.random() * 300);
-
+                const tx = Math.cos(angle) * (150 + Math.random() * 200);
+                const ty = Math.sin(angle) * (150 + Math.random() * 200);
                 conf.animate([
                     { transform: 'translate(0,0)', opacity: 1 },
                     { transform: `translate(${tx}px, ${ty}px)`, opacity: 0 }
-                ], { duration: 2000, easing: 'ease-out' });
-
-                setTimeout(() => conf.remove(), 2000);
+                ], { duration: 1500, easing: 'ease-out' });
+                setTimeout(() => conf.remove(), 1500);
             }
         }
 
-        // Generate Balloons
-        const colors = ['#ff4d6d', '#ff758f', '#ffb3c1', '#ffffff'];
-        for(let i=0; i<12; i++) {
+        const colors = ['#ff4d6d', '#ffb3c1', '#ffffff'];
+        for(let i=0; i<10; i++) {
             const b = document.createElement('div');
             b.className = 'balloon';
             b.style.left = Math.random() * 100 + 'vw';
