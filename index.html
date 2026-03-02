@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Happy Birthday Ruby!</title>
     <style>
         :root {
@@ -14,7 +14,7 @@
         body {
             margin: 0;
             padding: 0;
-            min-height: 100vh;
+            height: 100vh;
             background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
             font-family: 'Segoe UI', sans-serif;
             display: flex;
@@ -24,81 +24,98 @@
             perspective: 1000px;
         }
 
-        /* --- LARGE PHOTO FRAMES --- */
+        /* --- BACKGROUND BALLOONS --- */
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 30px;
+            height: 40px;
+            border-radius: 50%;
+            opacity: 0.4;
+            z-index: 0;
+            animation: floatAway 10s linear infinite;
+        }
+        @keyframes floatAway { to { bottom: 110vh; transform: translateX(50px); } }
+
+        /* --- PHOTO SYSTEM --- */
+        .frames-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
         .frame {
             position: absolute;
-            width: 160px; /* Increased size */
             background: white;
-            padding: 10px 10px 30px 10px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            padding: 8px 8px 25px 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             border: 1px solid #ddd;
+            pointer-events: auto;
+            transition: transform 0.3s;
             z-index: 5;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            animation: float 6s ease-in-out infinite;
         }
 
-        .frame img {
-            width: 100%;
-            height: 180px; /* Increased height */
-            object-fit: cover;
-            border-radius: 2px;
+        .frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Desktop Layout (Corners) */
+        @media (min-width: 769px) {
+            .frame { width: 140px; height: 160px; }
+            .f1 { top: 5%; left: 5%; transform: rotate(-8deg); }
+            .f2 { top: 5%; right: 5%; transform: rotate(8deg); }
+            .f3 { bottom: 5%; left: 5%; transform: rotate(5deg); }
+            .f4 { bottom: 5%; right: 5%; transform: rotate(-5deg); }
+            .f5 { top: 40%; left: 2%; transform: rotate(10deg); }
+            .f6 { top: 40%; right: 2%; transform: rotate(-10deg); }
+            .f7 { top: 2%; left: 45%; }
+            .f8 { bottom: 2%; left: 45%; }
+            .frame:hover { transform: scale(1.4) rotate(0deg) !important; z-index: 200; }
         }
 
-        /* Hover/Tap Zoom Effect */
-        .frame:hover {
-            transform: scale(1.5) rotate(0deg) !important;
-            z-index: 200;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(var(--r)); }
-            50% { transform: translateY(-15px) rotate(var(--r)); }
-        }
-
-        /* Desktop Positioning (Spaced out for bigger frames) */
-        .f1 { top: 5%; left: 3%; --r: -10deg; }
-        .f2 { top: 5%; right: 3%; --r: 10deg; }
-        .f3 { bottom: 5%; left: 3%; --r: 8deg; }
-        .f4 { bottom: 5%; right: 3%; --r: -8deg; }
-        .f5 { top: 35%; left: 1%; --r: 5deg; }
-        .f6 { top: 35%; right: 1%; --r: -5deg; }
-        .f7 { top: -2%; left: 40%; --r: 2deg; }
-        .f8 { bottom: -2%; left: 40%; --r: -2deg; }
-
-        /* --- MOBILE OPTIMIZATION --- */
+        /* Mobile Layout (Scrollable Strip) */
         @media (max-width: 768px) {
-            .frame {
-                width: 110px; /* Balanced size for mobile */
-                padding: 6px 6px 20px 6px;
+            .frames-layer {
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                pointer-events: none;
             }
-            .frame img { height: 120px; }
+            .mobile-scroll-container {
+                display: flex;
+                overflow-x: auto;
+                padding: 20px;
+                gap: 15px;
+                pointer-events: auto;
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(5px);
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+            .mobile-scroll-container::-webkit-scrollbar { display: none; }
             
-            /* Repositioning for mobile to prevent overlap */
-            .f1 { top: 2%; left: 2%; }
-            .f2 { top: 2%; right: 2%; }
-            .f3 { bottom: 2%; left: 2%; }
-            .f4 { bottom: 2%; right: 2%; }
-            .f5 { top: 25%; left: -5%; }
-            .f6 { top: 25%; right: -5%; }
-            .f7 { top: 1%; left: 35%; }
-            .f8 { bottom: 1%; left: 35%; }
+            .frame {
+                position: relative;
+                flex: 0 0 120px;
+                height: 150px;
+                top: auto !important; left: auto !important; right: auto !important; bottom: auto !important;
+                transform: rotate(0deg) !important;
+            }
             
-            .frame:hover { transform: scale(1.8) !important; }
+            .card-wrapper {
+                margin-top: -150px; /* Pull card up away from scroll bar */
+            }
         }
 
-        /* --- MAIN CARD --- */
+        /* --- THE CARD --- */
         .card-wrapper {
-            width: 300px;
-            height: 400px;
+            width: 280px;
+            height: 380px;
             cursor: pointer;
             position: relative;
             transform-style: preserve-3d;
             transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 150; /* Above frames */
+            z-index: 100;
         }
-
         .card-wrapper.open { transform: rotateY(180deg); }
 
         .card-side {
@@ -111,83 +128,68 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
             background: #fff;
             border: 5px solid white;
         }
 
         .back-side {
             transform: rotateY(180deg);
-            padding: 30px;
-            box-sizing: border-box;
+            padding: 25px;
             text-align: center;
         }
 
         .heart-btn {
             font-size: 80px;
             color: var(--primary);
-            animation: heartbeat 1.4s infinite;
+            animation: pulse 1.5s infinite;
         }
-
-        @keyframes heartbeat {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        /* --- BALLOONS --- */
-        .balloon {
-            position: absolute;
-            bottom: -150px;
-            width: 40px;
-            height: 55px;
-            border-radius: 50%;
-            opacity: 0.5;
-            animation: floatAway 12s linear infinite;
-        }
-
-        @keyframes floatAway {
-            to { bottom: 120vh; transform: translateX(100px); }
-        }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
     </style>
 </head>
 <body>
 
-    <div class="frame f1"><img src="1.jpg"></div>
-    <div class="frame f2"><img src="2.jpg"></div>
-    <div class="frame f3"><img src="3.jpg"></div>
-    <div class="frame f4"><img src="4.jpg"></div>
-    <div class="frame f5"><img src="5.jpg"></div>
-    <div class="frame f6"><img src="6.jpg"></div>
-    <div class="frame f7"><img src="7.jpg"></div>
-    <div class="frame f8"><img src="8.jpg"></div>
+    <div class="frames-layer">
+        <div class="mobile-scroll-container">
+            <div class="frame f1"><img src="1.jpg"></div>
+            <div class="frame f2"><img src="2.jpg"></div>
+            <div class="frame f3"><img src="3.jpg"></div>
+            <div class="frame f4"><img src="4.jpg"></div>
+            <div class="frame f5"><img src="5.jpg"></div>
+            <div class="frame f6"><img src="6.jpg"></div>
+            <div class="frame f7"><img src="7.jpg"></div>
+            <div class="frame f8"><img src="8.jpg"></div>
+        </div>
+    </div>
 
     <div class="card-wrapper" id="bdayCard" onclick="handleFlip()">
         <div class="card-side front-side">
             <div class="heart-btn">❤️</div>
-            <h2 style="color: var(--accent); margin-top: 20px;">For Ruby</h2>
-            <p style="color: #888;">Tap to Open</p>
+            <h2 style="color: var(--accent);">For Ruby</h2>
+            <p style="color: #999;">Tap to open</p>
         </div>
         <div class="card-side back-side">
-            <h1 style="color: var(--accent);">Happy Birthday!</h1>
-            <p style="color: #444; line-height: 1.6;">
-                To my dearest sister Ruby,<br><br>
-                May your day be filled with love and your year filled with amazing moments. You are truly special!
+            <h2 style="color: var(--accent); margin: 0;">Happy Birthday!</h2>
+            <p style="color: #444; line-height: 1.5;">
+                Wishing you a day as wonderful as you are. You're the best sister anyone could ask for!
             </p>
-            <p style="margin-top: 25px; font-weight: bold; color: var(--primary);">~ Aadi</p>
+            <p style="font-weight: bold; color: var(--primary);">~ Aadi</p>
         </div>
     </div>
 
     <script>
         function handleFlip() {
             const card = document.getElementById('bdayCard');
-            card.classList.toggle('open');
-            if(card.classList.contains('open')) {
+            if(!card.classList.contains('open')) {
+                card.classList.add('open');
                 triggerPopper();
+            } else {
+                card.classList.remove('open');
             }
         }
 
         function triggerPopper() {
-            for(let i=0; i<70; i++) {
+            for(let i=0; i<60; i++) {
                 const conf = document.createElement('div');
                 conf.style.cssText = `
                     position: fixed; width: 8px; height: 8px;
@@ -196,24 +198,24 @@
                 `;
                 document.body.appendChild(conf);
                 const angle = Math.random() * Math.PI * 2;
-                const dist = 200 + Math.random() * 400;
-                const tx = Math.cos(angle) * dist;
-                const ty = Math.sin(angle) * dist;
+                const tx = Math.cos(angle) * (150 + Math.random() * 250);
+                const ty = Math.sin(angle) * (150 + Math.random() * 250);
                 conf.animate([
-                    { transform: 'translate(0,0) scale(1)', opacity: 1 },
-                    { transform: `translate(${tx}px, ${ty}px) scale(0)`, opacity: 0 }
-                ], { duration: 2000, easing: 'ease-out' });
-                setTimeout(() => conf.remove(), 2000);
+                    { transform: 'translate(0,0)', opacity: 1 },
+                    { transform: `translate(${tx}px, ${ty}px)`, opacity: 0 }
+                ], { duration: 1500, easing: 'ease-out' });
+                setTimeout(() => conf.remove(), 1500);
             }
         }
 
-        const colors = ['#ff4d6d', '#ffb3c1', '#ffffff'];
-        for(let i=0; i<12; i++) {
+        // Balloons
+        const colors = ['#ff4d6d', '#ffccd5', '#ffffff'];
+        for(let i=0; i<8; i++) {
             const b = document.createElement('div');
             b.className = 'balloon';
             b.style.left = Math.random() * 100 + 'vw';
             b.style.backgroundColor = colors[Math.floor(Math.random()*colors.length)];
-            b.style.animationDelay = Math.random() * 12 + 's';
+            b.style.animationDelay = Math.random() * 10 + 's';
             document.body.appendChild(b);
         }
     </script>
